@@ -1,0 +1,2867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1265f3" id="browserThemeColor">
+<title>FinBuddy — Smart Money Management</title>
+
+<style>
+:root {
+    --bg: #f5f8ff;
+    --card: #ffffff;
+    --sidebar: #ffffff;
+    --text: #101b3a;
+    --muted: #64759b;
+    --border: #dce6fb;
+    --blue: #1265f3;
+    --blue-dark: #0b4dcc;
+    --blue-light: #eaf1ff;
+    --shadow: 0 8px 30px rgba(28, 73, 155, 0.055);
+    --red: #e35d6a;
+    --yellow: #f5b942;
+}
+
+body.dark {
+    --bg: #000000;
+    --card: #000000;
+    --sidebar: #000000;
+    --text: #f5f7ff;
+    --muted: #a8b1c7;
+    --border: #242424;
+    --blue: #4d8dff;
+    --blue-dark: #3479f5;
+    --blue-light: #111b2d;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+    --red: #ff7b85;
+    --yellow: #ffd16a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background .2s, color .2s;
+}
+
+html { color-scheme: light; }
+body.dark { color-scheme: dark; }
+body.nav-open { overflow: hidden; }
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+}
+
+.app {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+}
+
+.sidebar {
+    width: 265px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    padding: 28px 18px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    margin: 0 0 48px 2px;
+}
+
+.brand span:last-child {
+    color: var(--blue);
+}
+
+.brand-icon {
+    width: 49px;
+    height: 49px;
+    display: grid;
+    place-items: center;
+    background: var(--blue);
+    color: white;
+    border-radius: 15px;
+    font-size: 28px;
+}
+
+.nav-heading {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin: 0 0 13px 10px;
+}
+
+.nav-heading.manage {
+    margin-top: 32px;
+}
+
+.nav-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 13px;
+    margin-bottom: 6px;
+    border: 0;
+    border-radius: 13px;
+    background: transparent;
+    color: var(--muted);
+    text-align: left;
+    font-size: 14px;
+    font-weight: 650;
+    transition: .2s;
+}
+
+.nav-link:hover {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.nav-link.active {
+    color: var(--blue);
+    background: var(--blue-light);
+}
+
+.nav-icon {
+    width: 24px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.nav-count {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    border-radius: 50px;
+    padding: 3px 8px;
+    font-size: 11px;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 17px 12px 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 94px;
+    padding: 20px 35px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.topbar h2 {
+    font-size: 25px;
+    letter-spacing: -0.8px;
+}
+
+.topbar p {
+    color: var(--muted);
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-button {
+    width: 43px;
+    height: 43px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 13px;
+    font-size: 18px;
+    position: relative;
+}
+
+.primary-button {
+    border: 0;
+    background: var(--blue);
+    color: white;
+    padding: 13px 19px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 750;
+    transition: .2s;
+}
+
+.primary-button:hover {
+    background: var(--blue-dark);
+    transform: translateY(-1px);
+}
+
+.mobile-menu {
+    display: none;
+}
+
+.content {
+    max-width: 1600px;
+    margin: auto;
+    padding: 31px 35px 45px;
+}
+
+.welcome-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.welcome-row h1 {
+    font-size: clamp(25px, 2.3vw, 34px);
+    letter-spacing: -1.4px;
+}
+
+.welcome-row p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 9px;
+}
+
+.demo-badge {
+    white-space: nowrap;
+    color: var(--blue);
+    background: var(--blue-light);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 19px;
+    padding: 22px;
+    min-width: 0;
+    box-shadow: var(--shadow);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.stat-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+}
+
+.icon-green { background: var(--blue-light); }
+.icon-yellow { background: #fff5df; color: #b17c10; }
+.icon-red { background: #fff0f1; color: #d95564; }
+.icon-blue { background: #e9f3ff; color: #3679c9; }
+
+body.dark .icon-yellow,
+body.dark .icon-red,
+body.dark .icon-blue {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.stat-value {
+    font-size: clamp(22px, 2vw, 29px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 19px 0 8px;
+    overflow-wrap: anywhere;
+}
+
+.stat-foot {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.positive { color: var(--blue); }
+.negative { color: var(--red); }
+
+.panel-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 19px;
+    padding: 23px;
+    min-width: 0;
+    box-shadow: var(--shadow);
+}
+
+.panel + .panel {
+    margin-top: 0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.panel-header h3 {
+    font-size: 16px;
+    letter-spacing: -.3px;
+}
+
+.panel-header p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.small-select {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px;
+    font-size: 12px;
+    max-width: 135px;
+}
+
+.chart-summary {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 9px;
+}
+
+.chart-summary strong {
+    font-size: 27px;
+    letter-spacing: -.8px;
+}
+
+.chart-summary span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.bar-chart {
+    height: 235px;
+    display: flex;
+    align-items: stretch;
+    padding-top: 15px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.chart-y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 10px 27px 0;
+    color: var(--muted);
+    font-size: 10px;
+    width: 37px;
+    flex-shrink: 0;
+}
+
+.chart-bars {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    gap: 7px;
+    min-width: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent calc(25% - 1px),
+        var(--border) calc(25% - 1px),
+        var(--border) 25%
+    );
+    border-bottom: 1px solid var(--border);
+}
+
+.bar-column {
+    height: 100%;
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+}
+
+.bar {
+    width: min(65%, 25px);
+    min-height: 3px;
+    background: var(--blue);
+    border-radius: 5px 5px 0 0;
+    transition: height .3s, background .2s;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.bar:hover {
+    background: var(--blue-dark);
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -23px;
+    left: 0;
+    right: 0;
+    color: var(--muted);
+    font-size: 10px;
+    text-align: center;
+}
+
+.chart-note {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 29px;
+}
+
+.category-section {
+    margin-top: 32px;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.category-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+    align-items: center;
+}
+
+.category-name {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.category-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.category-amount {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.category-track {
+    height: 7px;
+    background: var(--bg);
+    border-radius: 20px;
+    overflow: hidden;
+    grid-column: 1 / -1;
+}
+
+.category-fill {
+    height: 100%;
+    border-radius: inherit;
+}
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.transaction-item:last-child {
+    border-bottom: 0;
+}
+
+.transaction-avatar {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--blue-light);
+    font-size: 19px;
+    flex-shrink: 0;
+}
+
+.transaction-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.transaction-info strong {
+    display: block;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.transaction-info small {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.transaction-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.transaction-right strong {
+    font-size: 13px;
+}
+
+.transaction-right small {
+    display: block;
+    color: var(--muted);
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+.text-button {
+    background: none;
+    border: 0;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.section-gap {
+    margin-top: 20px;
+}
+
+.tips-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tip-card {
+    display: flex;
+    gap: 13px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--card);
+}
+
+.tip-icon {
+    width: 39px;
+    height: 39px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--blue-light);
+    font-size: 19px;
+}
+
+.tip-card h4 {
+    font-size: 13px;
+    margin: 2px 0 6px;
+}
+
+.tip-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+.tip-saving {
+    margin-top: 7px;
+    color: var(--blue);
+    font-weight: 750;
+    font-size: 11px;
+}
+
+.goal-progress-wrap {
+    margin-top: 17px;
+}
+
+.goal-progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.goal-progress-label span:last-child {
+    color: var(--blue);
+    font-weight: 750;
+}
+
+.progress-track {
+    height: 9px;
+    background: var(--bg);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--blue);
+    border-radius: inherit;
+    transition: width .3s;
+}
+
+.goal-description {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.score-wrap {
+    display: flex;
+    align-items: center;
+    gap: 19px;
+}
+
+.score-circle {
+    width: 91px;
+    height: 91px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(var(--blue) 40%, var(--blue-light) 0);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.score-circle::before {
+    content: "";
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    background: var(--card);
+    border-radius: 50%;
+}
+
+.score-circle strong {
+    position: relative;
+    font-size: 20px;
+}
+
+.score-copy h4 {
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.score-copy p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.insight-banner {
+    padding: 17px;
+    border-radius: 15px;
+    background: var(--blue-light);
+    margin-bottom: 15px;
+}
+
+.insight-banner h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.insight-banner p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.insight-line {
+    display: flex;
+    gap: 10px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.insight-line:last-child {
+    border-bottom: 0;
+}
+
+.insight-line span {
+    font-size: 18px;
+}
+
+.insight-line p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.insight-line strong {
+    color: var(--text);
+}
+
+.page-section {
+    display: none;
+}
+
+.page-section.active {
+    display: block;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-input, .field-input {
+    width: 100%;
+    padding: 12px 13px;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-chip {
+    padding: 10px 13px;
+    background: var(--card);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.filter-chip.active {
+    color: white;
+    background: var(--blue);
+    border-color: var(--blue);
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 590px;
+}
+
+th {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    padding: 13px 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+td {
+    font-size: 12px;
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.category-pill {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 11px;
+}
+
+.empty-state {
+    padding: 28px 10px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 17px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.settings-row:last-child {
+    border-bottom: 0;
+}
+
+.settings-row strong {
+    font-size: 13px;
+}
+
+.settings-row p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 5px;
+}
+
+.settings-row select {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    background: var(--card);
+}
+
+.toggle {
+    width: 44px;
+    height: 25px;
+    border: 0;
+    border-radius: 20px;
+    background: var(--border);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.toggle::after {
+    content: "";
+    position: absolute;
+    width: 19px;
+    height: 19px;
+    top: 3px;
+    left: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: .2s;
+}
+
+.toggle.on {
+    background: var(--blue);
+}
+
+.toggle.on::after {
+    left: 22px;
+}
+
+.notification-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.notification-item strong {
+    font-size: 13px;
+}
+
+.notification-item p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+
+.notification-item small {
+    color: var(--muted);
+    display: block;
+    margin-top: 7px;
+    font-size: 10px;
+}
+
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 25, 21, .52);
+    z-index: 100;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop.open {
+    display: flex;
+}
+
+.modal {
+    width: min(500px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 25px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 20px 70px rgba(0,0,0,.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.modal-header h3 {
+    font-size: 20px;
+}
+
+.close-button {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+    width: 37px;
+    height: 37px;
+    font-size: 19px;
+}
+
+.modal .field {
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.secondary-button {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    max-width: calc(100% - 48px);
+    background: var(--blue-dark);
+    color: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    z-index: 200;
+    font-size: 13px;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: .25s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bottom-nav {
+    display: none;
+}
+
+.sidebar-overlay { display: none; }
+
+@media (max-width: 1250px) {
+    .sidebar { width: 225px; }
+    .content { padding: 27px 24px 40px; }
+    .topbar { padding: 19px 24px; }
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .panel-grid { grid-template-columns: minmax(0, 1.2fr) minmax(270px, 1fr); }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 78px;
+        padding: 24px 10px;
+    }
+    .brand {
+        justify-content: center;
+        margin: 0 0 40px;
+    }
+    .brand-icon {
+        width: 48px;
+        height: 48px;
+    }
+    .brand span:last-child,
+    .nav-heading,
+    .nav-link .nav-label,
+    .nav-count,
+    .sidebar-bottom {
+        display: none;
+    }
+    .nav-link {
+        justify-content: center;
+        padding: 15px 7px;
+    }
+    .nav-icon {
+        font-size: 22px;
+    }
+    .panel-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .app { display: block; }
+    .sidebar {
+        display: flex;
+        position: fixed;
+        z-index: 101;
+        inset: 0 auto 0 0;
+        width: min(82vw, 300px);
+        padding: 24px 16px;
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+        box-shadow: var(--shadow);
+        overflow-y: auto;
+    }
+    .sidebar.is-open { transform: translateX(0); }
+    .sidebar .brand { justify-content: flex-start; margin: 0 0 30px 2px; }
+    .sidebar .brand span:last-child { display: inline; }
+    .sidebar .nav-heading { display: block; }
+    .sidebar .nav-link .nav-label { display: inline; }
+    .sidebar .nav-count { display: inline-block; }
+    .sidebar .sidebar-bottom { display: block; }
+    .sidebar .nav-link { justify-content: flex-start; padding: 14px 12px; }
+    .sidebar-overlay.is-open {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        border: 0;
+        background: rgba(6, 18, 44, .42);
+    }
+    .topbar {
+        min-height: 76px;
+        padding: max(13px, env(safe-area-inset-top)) 16px 13px;
+    }
+    .topbar h2 { font-size: 20px; }
+    .topbar p { font-size: 11px; }
+    .top-actions { gap: 7px; }
+    .icon-button { width: 38px; height: 38px; }
+    .top-actions .primary-button {
+        padding: 11px 12px;
+        font-size: 11px;
+    }
+    .mobile-menu { display: inline-grid; place-items: center; }
+    .content { padding: 22px 14px 95px; }
+    .welcome-row {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 19px;
+    }
+    .welcome-row h1 { font-size: 27px; }
+    .welcome-row p { font-size: 12px; line-height: 1.6; }
+    .demo-badge { font-size: 11px; }
+    .stats-grid { gap: 10px; margin-bottom: 14px; }
+    .stat-card { padding: 14px; border-radius: 15px; }
+    .stat-label { font-size: 11px; }
+    .stat-icon { width: 34px; height: 34px; font-size: 16px; border-radius: 11px; }
+    .stat-value { font-size: 21px; margin: 15px 0 6px; }
+    .stat-foot { font-size: 10px; }
+    .panel { padding: 17px; border-radius: 16px; }
+    .panel-header h3 { font-size: 15px; }
+    .panel-grid { gap: 14px; }
+    .bar-chart { height: 205px; }
+    .chart-bars { gap: 3px; }
+    .bar { width: 65%; }
+    .chart-summary strong { font-size: 23px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: auto; }
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        z-index: 50;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        padding: 9px 3px max(9px, env(safe-area-inset-bottom));
+        justify-content: space-around;
+    }
+    .bottom-nav button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font-size: 10px;
+        padding: 4px 5px;
+        min-width: 48px;
+        min-height: 44px;
+    }
+    .bottom-nav button span:first-child { font-size: 19px; }
+    .bottom-nav button.active { color: var(--blue); font-weight: 750; }
+    .bottom-nav .add-nav {
+        background: var(--blue);
+        color: white;
+        width: 43px;
+        height: 43px;
+        margin-top: -17px;
+        border-radius: 50%;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(18, 101, 243, .25);
+    }
+    .toast { bottom: 85px; right: 12px; }
+}
+
+@media (max-width: 420px) {
+    .top-actions #addTransactionTop { display: none; }
+    .topbar { gap: 8px; padding-inline: 11px; }
+    .topbar > div:first-child { gap: 8px !important; }
+    .topbar p { font-size: 10px; }
+    .content { padding-inline: 11px; }
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat-card { padding: 12px; }
+    .stat-value { font-size: clamp(17px, 5.6vw, 21px); letter-spacing: -.5px; }
+    .panel { padding: 14px; }
+    .chart-y-axis { width: 31px; padding-right: 6px; }
+    .chart-bars { gap: 2px; }
+    .bar-label { font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <aside class="sidebar" id="sidebarNav" aria-label="Main navigation">
+        <div class="brand">
+            <div class="brand-icon">₹</div>
+            <span>Fin<span>Buddy</span></span>
+        </div>
+
+        <div class="nav-heading">WORKSPACE</div>
+        <button class="nav-link active" data-page="dashboard"><span class="nav-icon">▦</span><span class="nav-label">Dashboard</span></button>
+        <button class="nav-link" data-page="transactions"><span class="nav-icon">⇄</span><span class="nav-label">Transactions</span></button>
+        <button class="nav-link" data-page="insights"><span class="nav-icon">◇</span><span class="nav-label">Insights &amp; Tips</span></button>
+        <button class="nav-link" data-page="notifications"><span class="nav-icon">♧</span><span class="nav-label">Notifications</span><span class="nav-count" id="notificationCount">0</span></button>
+
+        <div class="nav-heading manage">MANAGE</div>
+        <button class="nav-link" data-page="goals"><span class="nav-icon">◎</span><span class="nav-label">Saving Goals</span></button>
+        <button class="nav-link" data-page="settings"><span class="nav-icon">⚙</span><span class="nav-label">Settings</span></button>
+
+        <div class="sidebar-bottom">
+            FinBuddy Prototype<br>
+            Smart spending. Better saving.
+        </div>
+    </aside>
+    <button class="sidebar-overlay" id="sidebarOverlay" type="button" aria-label="Close navigation" tabindex="-1"></button>
+
+    <main class="main">
+        <header class="topbar">
+            <div style="display:flex;align-items:center;gap:12px">
+                <button class="icon-button mobile-menu" id="mobileMenu" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebarNav">☰</button>
+                <div>
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <p id="currentDate"></p>
+                </div>
+            </div>
+            <div class="top-actions">
+                <button class="icon-button" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">☾</button>
+                <button class="icon-button" id="topNotifications" aria-label="Notifications">♧</button>
+                <button class="primary-button" id="addTransactionTop">＋ Add Transaction</button>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+            <section class="page-section active" id="page-dashboard">
+                <div class="welcome-row">
+                    <div>
+                        <h1>Money Overview 👋</h1>
+                        <p>Understand your spending, build better habits and save smarter.</p>
+                    </div>
+                    <div class="demo-badge" id="storageStatusBadge">● Local preview · Browser storage</div>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Total Spent</span>
+                            <span class="stat-icon icon-green">↗</span>
+                        </div>
+                        <div class="stat-value" id="totalSpent">₹0.00</div>
+                        <div class="stat-foot" id="expenseCount">0 expenses this month</div>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Money Saved</span>
+                            <span class="stat-icon icon-green">♧</span>
+                        </div>
+                        <div class="stat-value" id="moneySaved">₹0.00</div>
+                        <div class="stat-foot positive">Your current savings progress</div>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Monthly Budget</span>
+                            <span class="stat-icon icon-yellow">▤</span>
+                        </div>
+                        <div class="stat-value" id="monthlyBudget">₹12,000</div>
+                        <div class="stat-foot" id="budgetFoot">Monthly spending limit</div>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-label">Smart Saving Score</span>
+                            <span class="stat-icon icon-red">✦</span>
+                        </div>
+                        <div class="stat-value"><span id="savingScore">75</span><span style="font-size:16px;color:var(--muted)">/100</span></div>
+                        <div class="stat-foot" id="scoreFoot">Keep building good habits</div>
+                    </article>
+                </div>
+
+                <div class="panel-grid">
+                    <div>
+                        <article class="panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Monthly Spending Analytics</h3>
+                                    <p>Your total spending across the selected period</p>
+                                </div>
+                                <select class="small-select" id="chartPeriod" aria-label="Chart period">
+                                    <option value="month">This Month</option>
+                                    <option value="last">Last 6 Months</option>
+                                </select>
+                            </div>
+
+                            <div class="chart-summary">
+                                <strong id="chartTotal">₹0</strong>
+                                <span id="chartSubtitle">Total spending this month</span>
+                            </div>
+
+                            <div class="bar-chart">
+                                <div class="chart-y-axis" id="chartYAxis">
+                                    <span>₹12k</span><span>₹9k</span><span>₹6k</span><span>₹3k</span><span>₹0</span>
+                                </div>
+                                <div class="chart-bars" id="chartBars" role="img" aria-label="Bar graph of monthly spending"></div>
+                            </div>
+                            <p class="chart-note">Bar graph updates when you add or remove transactions.</p>
+
+                            <div class="category-section">
+                                <div class="panel-header">
+                                    <h3>Spending by Category</h3>
+                                    <button class="text-button" data-goto="transactions">See all →</button>
+                                </div>
+                                <div class="category-list" id="categoryList"></div>
+                            </div>
+                        </article>
+
+                        <article class="panel section-gap">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Recent Transactions</h3>
+                                    <p>Your latest recorded expenses</p>
+                                </div>
+                                <button class="text-button" data-goto="transactions">See all →</button>
+                            </div>
+                            <div class="transaction-list" id="recentTransactions"></div>
+                        </article>
+                    </div>
+
+                    <div>
+                        <article class="panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Smart Tips for You 🌱</h3>
+                                    <p>Simple steps. Better savings.</p>
+                                </div>
+                                <button class="text-button" data-goto="insights">All tips →</button>
+                            </div>
+                            <div class="tips-list" id="dashboardTips"></div>
+                        </article>
+
+                        <article class="panel section-gap">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Saving Goal</h3>
+                                    <p id="goalNameSmall">Your personal goal</p>
+                                </div>
+                                <button class="text-button" data-goto="goals">Manage</button>
+                            </div>
+                            <div class="goal-progress-wrap">
+                                <div class="goal-progress-label">
+                                    <span id="goalSavedText">₹0 saved</span>
+                                    <span id="goalPercent">0%</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" id="goalProgressFill"></div></div>
+                                <p class="goal-description" id="goalDescription"></p>
+                            </div>
+                        </article>
+
+                        <article class="panel section-gap">
+                            <div class="panel-header">
+                                <h3>Smart Saving Score</h3>
+                                <span class="stat-icon icon-green">✦</span>
+                            </div>
+                            <div class="score-wrap">
+                                <div class="score-circle" id="scoreCircle"><strong id="scoreCircleText">75</strong></div>
+                                <div class="score-copy">
+                                    <h4 id="scoreHeading">Good progress!</h4>
+                                    <p id="scoreDescription">Review your expenses and keep your budget on track.</p>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="panel section-gap">
+                            <div class="panel-header"><h3>Spending Insight</h3></div>
+                            <div id="dashboardInsight"></div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRANSACTIONS -->
+            <section class="page-section" id="page-transactions">
+                <div class="welcome-row">
+                    <div>
+                        <h1>Transactions</h1>
+                        <p>Track, search and categorize your expenses.</p>
+                    </div>
+                    <button class="primary-button" id="addTransactionPage">＋ Add Transaction</button>
+                </div>
+
+                <article class="panel">
+                    <div class="filter-row">
+                        <input class="search-input" id="transactionSearch" placeholder="⌕  Search transactions..." aria-label="Search transactions">
+                        <button class="filter-chip active" data-filter="All">All</button>
+                        <button class="filter-chip" data-filter="Food">Food</button>
+                        <button class="filter-chip" data-filter="Travel">Travel</button>
+                        <button class="filter-chip" data-filter="Shopping">Shopping</button>
+                        <button class="filter-chip" data-filter="Bills/Recharge">Bills/Recharge</button>
+                        <button class="filter-chip" data-filter="Fees">Fees</button>
+                        <button class="filter-chip" data-filter="Entertainment">Entertainment</button>
+                        <button class="filter-chip" data-filter="Others">Others</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>TRANSACTION</th><th>CATEGORY</th><th>DATE</th><th>AMOUNT</th><th>ACTION</th></tr>
+                            </thead>
+                            <tbody id="transactionTable"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="transactionEmpty" hidden>No transactions found. Add a transaction to get started.</div>
+                </article>
+            </section>
+
+            <!-- INSIGHTS AND SAVING TIPS -->
+            <section class="page-section" id="page-insights">
+                <div class="welcome-row">
+                    <div>
+                        <h1>Insights &amp; Saving Tips 🌱</h1>
+                        <p>Practical ways to spend thoughtfully and save more.</p>
+                    </div>
+                </div>
+
+                <div class="panel-grid">
+                    <article class="panel">
+                        <div class="panel-header"><h3>Your Spending Insights</h3></div>
+                        <div id="allInsights"></div>
+                    </article>
+                    <article class="panel">
+                        <div class="panel-header"><h3>Personalized Saving Tips</h3></div>
+                        <div class="tips-list" id="allTips"></div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- NOTIFICATIONS -->
+            <section class="page-section" id="page-notifications">
+                <div class="welcome-row">
+                    <div>
+                        <h1>Notifications</h1>
+                        <p>Spending alerts and updates from FinBuddy.</p>
+                    </div>
+                    <button class="secondary-button" id="clearNotifications">Clear history</button>
+                </div>
+                <article class="panel">
+                    <div id="notificationList"></div>
+                    <div class="empty-state" id="notificationEmpty" hidden>No notifications yet.</div>
+                </article>
+                <article class="panel section-gap">
+                    <div class="panel-header"><h3>Browser Notifications</h3></div>
+                    <p style="color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:16px">
+                        Allow browser notifications to receive supported alerts while the browser is open. This prototype does not automatically read SMS messages.
+                    </p>
+                    <button class="primary-button" id="enableBrowserNotifications">Enable Browser Notifications</button>
+                    <p class="goal-description" id="browserStatus"></p>
+                </article>
+            </section>
+
+            <!-- SAVING GOALS -->
+            <section class="page-section" id="page-goals">
+                <div class="welcome-row">
+                    <div>
+                        <h1>Saving Goals</h1>
+                        <p>Plan your savings and track your progress.</p>
+                    </div>
+                </div>
+
+                <div class="panel-grid">
+                    <article class="panel">
+                        <div class="panel-header"><h3>Your Current Goal</h3><span class="stat-icon icon-green">◎</span></div>
+                        <h2 id="goalBigName" style="font-size:25px;margin:12px 0"></h2>
+                        <p style="color:var(--muted);font-size:13px">Savings progress</p>
+                        <div class="goal-progress-wrap">
+                            <div class="goal-progress-label"><span id="goalBigSaved"></span><span id="goalBigPercent"></span></div>
+                            <div class="progress-track"><div class="progress-fill" id="goalBigFill"></div></div>
+                            <p class="goal-description" id="goalBigDescription"></p>
+                        </div>
+                    </article>
+                    <article class="panel">
+                        <div class="panel-header"><h3>Update Your Goal</h3></div>
+                        <form id="goalForm">
+                            <div class="field">
+                                <label for="goalNameInput">Goal name</label>
+                                <input class="field-input" id="goalNameInput" required maxlength="60" placeholder="e.g. New laptop">
+                            </div>
+                            <div class="field">
+                                <label for="goalTargetInput">Target amount (₹)</label>
+                                <input class="field-input" id="goalTargetInput" type="number" min="1" step="1" required>
+                            </div>
+                            <div class="field">
+                                <label for="goalSavedInput">Amount saved (₹)</label>
+                                <input class="field-input" id="goalSavedInput" type="number" min="0" step="1" required>
+                            </div>
+                            <button class="primary-button" type="submit">Save Goal</button>
+                        </form>
+                    </article>
+                </div>
+            </section>
+
+            <!-- SETTINGS -->
+            <section class="page-section" id="page-settings">
+                <div class="welcome-row">
+                    <div>
+                        <h1>Settings</h1>
+                        <p>Customize your FinBuddy experience.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+                    <div class="panel-header"><h3>Appearance</h3></div>
+                    <div class="settings-row">
+                        <div><strong>Theme</strong><p>Choose between light and dark mode.</p></div>
+                        <select id="themeSelect" aria-label="Theme">
+                            <option value="light">Light theme</option>
+                            <option value="dark">Dark theme</option>
+                            <option value="system">System default</option>
+                        </select>
+                    </div>
+                </article>
+
+                <article class="panel section-gap">
+                    <div class="panel-header"><h3>Monthly Budget</h3></div>
+                    <form id="budgetForm">
+                        <div class="field">
+                            <label for="budgetInput">Monthly spending limit (₹)</label>
+                            <input class="field-input" id="budgetInput" type="number" min="1" step="1" required>
+                        </div>
+                        <button class="primary-button" type="submit">Save Budget</button>
+                    </form>
+                </article>
+
+                <article class="panel section-gap">
+                    <div class="panel-header"><h3>Notifications</h3></div>
+                    <div class="settings-row">
+                        <div><strong>Spending alerts</strong><p>Notify when spending reaches 80% of your budget.</p></div>
+                        <button class="toggle on" id="budgetAlertsToggle" aria-label="Toggle spending alerts" aria-pressed="true"></button>
+                    </div>
+                    <div class="settings-row">
+                        <div><strong>Browser notifications</strong><p>Use browser-supported notifications when permitted.</p></div>
+                        <button class="secondary-button" id="settingsBrowserButton">Enable</button>
+                    </div>
+                </article>
+
+                <article class="panel section-gap">
+                    <div class="panel-header"><h3>Automatic UPI capture</h3></div>
+                    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:15px">
+                        On Android, FinBuddy can look for payment notifications from Google Pay, PhonePe, Paytm and BHIM. Android will ask you to grant notification access. Matching is done on this device; notification text can contain sensitive details. Capture may miss payments when an app does not show a readable notification, and you can turn access off in Android Settings.
+                    </p>
+                    <div class="settings-row">
+                        <div><strong id="androidCaptureStatus">Android app required</strong><p id="androidCaptureHelp">This browser page cannot read notifications from other apps.</p></div>
+                        <button class="secondary-button" id="androidCaptureButton" type="button">Set up</button>
+                    </div>
+                </article>
+
+                <article class="panel section-gap">
+                    <div class="panel-header"><h3>Prototype Data</h3></div>
+                    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:15px">
+                        FinBuddy stores expenses on this device. The Android app checks only matching notifications from supported UPI apps and does not send transaction data to a server. The web page alone cannot access notifications from other apps. Back up your browser data before clearing app storage.
+                    </p>
+                    <button class="secondary-button" id="resetDemo">Reset Demo Data</button>
+                </article>
+            </section>
+        </div>
+    </main>
+</div>
+
+<nav class="bottom-nav" aria-label="Mobile navigation">
+    <button class="active" data-page="dashboard"><span>⌂</span><span>Home</span></button>
+    <button data-page="transactions"><span>⇄</span><span>Transactions</span></button>
+    <button class="add-nav" id="mobileAdd" aria-label="Add transaction"><span>＋</span></button>
+    <button data-page="insights"><span>▥</span><span>Insights</span></button>
+    <button data-page="goals"><span>♡</span><span>Goals</span></button>
+</nav>
+
+<!-- ADD TRANSACTION MODAL -->
+<div class="modal-backdrop" id="transactionModal" role="dialog" aria-modal="true" aria-labelledby="transactionModalTitle">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="transactionModalTitle">Add Transaction</h3>
+            <button class="close-button" data-close="transactionModal" aria-label="Close">×</button>
+        </div>
+
+        <form id="transactionForm">
+            <div class="field">
+                <label for="smsText">Paste bank / UPI SMS (optional)</label>
+                <textarea class="field-input" id="smsText" placeholder="Example: Rs. 450 debited at Swiggy via UPI on 28 Oct"></textarea>
+                <p class="goal-description">The prototype tries to detect the amount and merchant from pasted text.</p>
+            </div>
+            <button type="button" class="secondary-button" id="parseSms" style="margin-bottom:17px">Analyze Text</button>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="merchantInput">Merchant / Description</label>
+                    <input class="field-input" id="merchantInput" required maxlength="100" placeholder="e.g. Swiggy">
+                </div>
+                <div class="field">
+                    <label for="amountInput">Amount (₹)</label>
+                    <input class="field-input" id="amountInput" required type="number" min="0.01" step="0.01" placeholder="450">
+                </div>
+                <div class="field">
+                    <label for="categoryInput">Category</label>
+                    <select class="field-input" id="categoryInput">
+                        <option>Food</option>
+                        <option>Travel</option>
+                        <option>Shopping</option>
+                        <option>Bills/Recharge</option>
+                        <option>Fees</option>
+                        <option>Entertainment</option>
+                        <option>Others</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="dateInput">Date</label>
+                    <input class="field-input" id="dateInput" required type="date">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" data-close="transactionModal">Cancel</button>
+                <button type="submit" class="primary-button">Add Transaction</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* Use the local Python/SQLite API when served by server.py or VS Code Live Server.
+   Direct file previews keep using browser storage. */
+
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "::1", "[::1]"]);
+const BACKEND_API_ORIGIN = window.location.protocol === "http:"
+    && LOOPBACK_HOSTS.has(window.location.hostname)
+    && window.location.port !== "8000"
+    ? "http://127.0.0.1:8000"
+    : "";
+
+const STORAGE_KEY = "finbuddy-single-file-v1";
+
+const CATEGORY_INFO = {
+    Food:     { icon: "🍔", color: "#ed765b" },
+    Travel:   { icon: "🚌", color: "#4d9edb" },
+    Shopping: { icon: "🛍️", color: "#c07bd5" },
+    "Bills/Recharge": { icon: "🧾", color: "#6e83e8" },
+    Fees:     { icon: "🎓", color: "#7e8eea" },
+    Entertainment: { icon: "🎬", color: "#df7b9b" },
+    Others:   { icon: "📦", color: "#e8b04f" }
+};
+
+const SAVING_TIPS = [
+    {
+        icon: "🍲",
+        category: "Food",
+        title: "Cook at home more often",
+        description: "Plan simple meals and limit frequent food deliveries. Compare your food expenses each week.",
+        saving: "Potential savings depend on your current spending."
+    },
+    {
+        icon: "🚌",
+        category: "Travel",
+        title: "Choose affordable transport",
+        description: "Use public transport, walk when practical, or share rides for suitable journeys.",
+        saving: "Review travel costs weekly."
+    },
+    {
+        icon: "🛍️",
+        category: "Shopping",
+        title: "Use a 24-hour buying rule",
+        description: "Wait a day before buying non-essential items. Recheck your budget before purchasing.",
+        saving: "Reduce unnecessary purchases."
+    },
+    {
+        icon: "📊",
+        category: "Budget",
+        title: "Set a weekly spending limit",
+        description: "Divide your monthly budget into weekly amounts and check your expenses regularly.",
+        saving: "Avoid budget surprises."
+    },
+    {
+        icon: "🎯",
+        category: "Saving",
+        title: "Save a small amount regularly",
+        description: "Choose an affordable amount and add it to your savings whenever you can.",
+        saving: "Build a consistent habit."
+    },
+    {
+        icon: "🧾",
+        category: "Subscriptions",
+        title: "Review recurring payments",
+        description: "Check subscriptions and recurring expenses. Keep only the services you actually use.",
+        saving: "Avoid unwanted recurring costs."
+    },
+    {
+        icon: "☕",
+        category: "Daily habits",
+        title: "Track small purchases",
+        description: "Record snacks, drinks and other small purchases. Small expenses can add up over time.",
+        saving: "Understand where your money goes."
+    },
+    {
+        icon: "💳",
+        category: "Planning",
+        title: "Compare before purchasing",
+        description: "Compare prices and check whether an item fits your budget before you buy it.",
+        saving: "Make informed spending decisions."
+    }
+];
+
+const DEMO_TRANSACTIONS = [
+    { id: 1, merchant: "Swiggy", amount: 450, category: "Food", date: "2026-10-27" },
+    { id: 2, merchant: "Metro Card Recharge", amount: 200, category: "Travel", date: "2026-10-26" },
+    { id: 3, merchant: "College Fees", amount: 3000, category: "Fees", date: "2026-10-24" },
+    { id: 4, merchant: "Zomato", amount: 320, category: "Food", date: "2026-10-22" },
+    { id: 5, merchant: "Reliance Digital", amount: 1299, category: "Shopping", date: "2026-10-20" },
+    { id: 6, merchant: "Bus Pass", amount: 150, category: "Travel", date: "2026-10-18" },
+    { id: 7, merchant: "Stationery", amount: 284, category: "Others", date: "2026-10-15" },
+    { id: 8, merchant: "Cafe Coffee", amount: 350, category: "Food", date: "2026-10-12" },
+    { id: 9, merchant: "Books", amount: 350, category: "Others", date: "2026-10-08" }
+];
+
+const DEFAULT_STATE = {
+    transactions: DEMO_TRANSACTIONS,
+    budget: 12000,
+    saved: 5500,
+    goal: {
+        name: "New Laptop",
+        target: 25000,
+        saved: 5500
+    },
+    theme: "light",
+    notifications: [],
+    budgetAlerts: true,
+    lastBudgetAlertMonth: ""
+};
+
+let state = loadState();
+let activeFilter = "All";
+let toastTimeout;
+let databaseConnected = false;
+let backendReady = Promise.resolve(false);
+
+function loadState() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) return structuredCopy(DEFAULT_STATE);
+
+        const parsed = JSON.parse(stored);
+        return {
+            ...structuredCopy(DEFAULT_STATE),
+            ...parsed,
+            transactions: Array.isArray(parsed.transactions) ? parsed.transactions : structuredCopy(DEMO_TRANSACTIONS),
+            notifications: Array.isArray(parsed.notifications) ? parsed.notifications : [],
+            goal: { ...DEFAULT_STATE.goal, ...(parsed.goal || {}) }
+        };
+    } catch (error) {
+        return structuredCopy(DEFAULT_STATE);
+    }
+}
+
+function structuredCopy(value) {
+    return JSON.parse(JSON.stringify(value));
+}
+
+function saveState() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        return true;
+    } catch (error) {
+        showToast("Could not save data in this browser.");
+        return false;
+    }
+}
+
+async function apiRequest(path, options = {}) {
+    const response = await fetch(`${BACKEND_API_ORIGIN}${path}`, {
+        cache: "no-store",
+        ...options,
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || `Request failed (${response.status}).`);
+    return payload;
+}
+
+async function initializeBackend() {
+    const badge = document.getElementById("storageStatusBadge");
+    badge.textContent = "Connecting to SQLite…";
+    try {
+        await apiRequest("/api/health");
+        const records = await apiRequest("/api/transactions?type=debit");
+        state.transactions = records;
+        databaseConnected = true;
+        badge.textContent = "SQLite connected";
+        saveState();
+        renderDashboard();
+        renderTransactions();
+        return true;
+    } catch (error) {
+        databaseConnected = false;
+        badge.textContent = "Local preview · Browser storage";
+        return false;
+    }
+}
+
+function money(value) {
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2
+    }).format(Number(value) || 0);
+}
+
+function shortMoney(value) {
+    const number = Number(value) || 0;
+    if (number >= 100000) return "₹" + (number / 100000).toFixed(1) + "L";
+    if (number >= 1000) return "₹" + (number / 1000).toFixed(number >= 10000 ? 0 : 1) + "k";
+    return "₹" + Math.round(number);
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function localDateString(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function dateLabel(dateString) {
+    const date = new Date(dateString + "T12:00:00");
+    if (Number.isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function currentMonthTransactions() {
+    const now = new Date();
+    return state.transactions.filter(transaction => {
+        const date = new Date(transaction.date + "T12:00:00");
+        return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+    });
+}
+
+function sumTransactions(transactions) {
+    return transactions.reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0);
+}
+
+function getCategoryTotals(transactions) {
+    const totals = {};
+    Object.keys(CATEGORY_INFO).forEach(category => totals[category] = 0);
+    transactions.forEach(transaction => {
+        const category = CATEGORY_INFO[transaction.category] ? transaction.category : "Others";
+        totals[category] += Number(transaction.amount || 0);
+    });
+    return totals;
+}
+
+function getScore() {
+    const monthTotal = sumTransactions(currentMonthTransactions());
+    const ratio = state.budget > 0 ? monthTotal / state.budget : 1;
+    if (ratio <= 0.5) return 95;
+    if (ratio <= 0.7) return 85;
+    if (ratio <= 0.9) return 75;
+    if (ratio <= 1) return 60;
+    return Math.max(25, Math.round(60 - (ratio - 1) * 25));
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => toast.classList.remove("show"), 2800);
+}
+
+function applyTheme(theme) {
+    state.theme = theme;
+    const isDark = theme === "dark" ||
+        (theme === "system" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    document.body.classList.toggle("dark", isDark);
+
+    const selector = document.getElementById("themeSelect");
+    if (selector) selector.value = theme;
+
+    const themeToggle = document.getElementById("themeToggle");
+    if (themeToggle) {
+        const label = isDark ? "Switch to light mode" : "Switch to dark mode";
+        themeToggle.textContent = isDark ? "☀" : "☾";
+        themeToggle.setAttribute("aria-label", label);
+        themeToggle.title = label;
+        themeToggle.setAttribute("aria-pressed", String(isDark));
+    }
+    const browserThemeColor = document.getElementById("browserThemeColor");
+    if (browserThemeColor) browserThemeColor.content = isDark ? "#000000" : "#1265f3";
+    if (window.FinBuddyAndroid && window.FinBuddyAndroid.setDarkMode) {
+        window.FinBuddyAndroid.setDarkMode(isDark);
+    }
+
+    saveState();
+    renderChart();
+    renderCategories();
+    renderScore();
+}
+
+function addNotification(title, message) {
+    state.notifications.unshift({
+        id: Date.now() + Math.random(),
+        title,
+        message,
+        date: new Date().toISOString()
+    });
+
+    state.notifications = state.notifications.slice(0, 50);
+    saveState();
+    renderNotifications();
+
+    if ("Notification" in window && Notification.permission === "granted") {
+        try {
+            new Notification("FinBuddy · " + title, { body: message });
+        } catch (error) {
+            // In-app notification remains available if browser notifications fail.
+        }
+    }
+}
+
+function checkBudgetAlert() {
+    if (!state.budgetAlerts || state.budget <= 0) return;
+
+    const total = sumTransactions(currentMonthTransactions());
+    const monthKey = localDateString().slice(0, 7);
+
+    if (total >= state.budget * 0.8 && state.lastBudgetAlertMonth !== monthKey) {
+        state.lastBudgetAlertMonth = monthKey;
+        saveState();
+        addNotification("Budget alert", `You have spent ${money(total)}, which is at least 80% of your monthly budget.`);
+    }
+}
+
+function renderDashboard() {
+    const monthTransactions = currentMonthTransactions();
+    const monthTotal = sumTransactions(monthTransactions);
+    const totalSaved = Number(state.saved) || 0;
+    const percentUsed = state.budget > 0 ? monthTotal / state.budget * 100 : 0;
+
+    document.getElementById("totalSpent").textContent = money(monthTotal);
+    document.getElementById("moneySaved").textContent = money(totalSaved);
+    document.getElementById("monthlyBudget").textContent = money(state.budget);
+    document.getElementById("expenseCount").textContent = `${monthTransactions.length} expenses this month`;
+
+    const foot = document.getElementById("budgetFoot");
+    foot.textContent = `${Math.round(percentUsed)}% of budget used`;
+    foot.className = "stat-foot " + (percentUsed > 100 ? "negative" : "positive");
+
+    renderScore();
+    renderChart();
+    renderCategories();
+    renderRecentTransactions();
+    renderTips("dashboardTips", 4);
+    renderGoal();
+    renderDashboardInsight();
+    renderNotifications();
+}
+
+function renderScore() {
+    const score = getScore();
+
+    document.getElementById("savingScore").textContent = score;
+    document.getElementById("scoreCircleText").textContent = score;
+    document.getElementById("scoreCircle").style.background =
+        `conic-gradient(var(--blue) ${score}%, var(--blue-light) 0)`;
+
+    document.getElementById("scoreFoot").textContent =
+        score >= 80 ? "Excellent money habits" :
+        score >= 60 ? "Keep building good habits" :
+        "Review your monthly spending";
+
+    document.getElementById("scoreHeading").textContent =
+        score >= 80 ? "Great progress!" :
+        score >= 60 ? "Room to improve" :
+        "Time to review spending";
+
+    document.getElementById("scoreDescription").textContent =
+        score >= 80
+            ? "Your current spending is within a healthy range for your budget."
+            : "Review category spending and adjust your budget when needed.";
+}
+
+function renderChart() {
+    const period = document.getElementById("chartPeriod").value;
+    const now = new Date();
+    let bars = [];
+
+    if (period === "month") {
+        const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const numberOfBars = Math.min(daysInMonth, 12);
+        const monthTransactions = currentMonthTransactions();
+        const interval = Math.ceil(daysInMonth / numberOfBars);
+
+        for (let index = 0; index < numberOfBars; index++) {
+            const startDay = index * interval + 1;
+            const endDay = Math.min(daysInMonth, startDay + interval - 1);
+            const total = sumTransactions(monthTransactions.filter(transaction => {
+                const day = Number(transaction.date.slice(8, 10));
+                return day >= startDay && day <= endDay;
+            }));
+
+            bars.push({
+                label: startDay === endDay ? String(startDay) : `${startDay}–${endDay}`,
+                total
+            });
+        }
+
+        document.getElementById("chartTotal").textContent = money(sumTransactions(monthTransactions));
+        document.getElementById("chartSubtitle").textContent = "Total spending this month";
+    } else {
+        for (let offset = 5; offset >= 0; offset--) {
+            const date = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+            const total = sumTransactions(state.transactions.filter(transaction => {
+                const txDate = new Date(transaction.date + "T12:00:00");
+                return txDate.getFullYear() === date.getFullYear() &&
+                    txDate.getMonth() === date.getMonth();
+            }));
+
+            bars.push({
+                label: date.toLocaleDateString("en-IN", { month: "short" }),
+                total
+            });
+        }
+
+        const lastSixTotal = bars.reduce((sum, bar) => sum + bar.total, 0);
+        document.getElementById("chartTotal").textContent = money(lastSixTotal);
+        document.getElementById("chartSubtitle").textContent = "Total spending over 6 months";
+    }
+
+    const maximum = Math.max(...bars.map(bar => bar.total), 1000);
+    const chartBars = document.getElementById("chartBars");
+    chartBars.innerHTML = "";
+
+    bars.forEach(item => {
+        const column = document.createElement("div");
+        column.className = "bar-column";
+
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = `${Math.max(2, item.total / maximum * 100)}%`;
+        bar.title = `${item.label}: ${money(item.total)}`;
+        bar.setAttribute("aria-label", `${item.label}: ${money(item.total)}`);
+
+        const label = document.createElement("span");
+        label.className = "bar-label";
+        label.textContent = item.label;
+
+        column.append(bar, label);
+        chartBars.appendChild(column);
+    });
+
+    const yAxis = document.getElementById("chartYAxis");
+    yAxis.innerHTML = "";
+    [1, 0.75, 0.5, 0.25, 0].forEach(fraction => {
+        const label = document.createElement("span");
+        label.textContent = shortMoney(maximum * fraction);
+        yAxis.appendChild(label);
+    });
+}
+
+function renderCategories() {
+    const totals = getCategoryTotals(currentMonthTransactions());
+    const grandTotal = Object.values(totals).reduce((sum, value) => sum + value, 0);
+    const list = document.getElementById("categoryList");
+
+    list.innerHTML = Object.entries(totals)
+        .sort((a, b) => b[1] - a[1])
+        .map(([category, amount]) => {
+            const info = CATEGORY_INFO[category];
+            const percent = grandTotal > 0 ? amount / grandTotal * 100 : 0;
+
+            return `
+                <div class="category-row">
+                    <div class="category-name">
+                        <span class="category-dot" style="background:${info.color}"></span>
+                        ${escapeHTML(category)}
+                        <span style="color:var(--muted);font-size:11px">${Math.round(percent)}%</span>
+                    </div>
+                    <div class="category-amount">${money(amount)}</div>
+                    <div class="category-track">
+                        <div class="category-fill" style="width:${percent}%;background:${info.color}"></div>
+                    </div>
+                </div>`;
+        }).join("");
+}
+
+function transactionMarkup(transaction) {
+    const info = CATEGORY_INFO[transaction.category] || CATEGORY_INFO.Others;
+
+    return `
+        <div class="transaction-item">
+            <div class="transaction-avatar">${info.icon}</div>
+            <div class="transaction-info">
+                <strong>${escapeHTML(transaction.merchant)}</strong>
+                <small>${escapeHTML(transaction.category)} · ${escapeHTML(dateLabel(transaction.date))}</small>
+            </div>
+            <div class="transaction-right">
+                <strong>−${money(transaction.amount)}</strong>
+                <small>Expense</small>
+            </div>
+        </div>`;
+}
+
+function renderRecentTransactions() {
+    const container = document.getElementById("recentTransactions");
+    const transactions = [...state.transactions]
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, 5);
+
+    container.innerHTML = transactions.length
+        ? transactions.map(transactionMarkup).join("")
+        : '<div class="empty-state">No transactions yet.</div>';
+}
+
+function renderTips(containerId, limit = Infinity) {
+    const container = document.getElementById(containerId);
+    const monthTransactions = currentMonthTransactions();
+    const categoryTotals = getCategoryTotals(monthTransactions);
+
+    const tips = [...SAVING_TIPS].sort((a, b) => {
+        const aTotal = categoryTotals[a.category] || 0;
+        const bTotal = categoryTotals[b.category] || 0;
+        return bTotal - aTotal;
+    });
+
+    container.innerHTML = tips.slice(0, limit).map(tip => `
+        <div class="tip-card">
+            <div class="tip-icon">${tip.icon}</div>
+            <div>
+                <h4>${escapeHTML(tip.title)}</h4>
+                <p>${escapeHTML(tip.description)}</p>
+                <div class="tip-saving">${escapeHTML(tip.saving)}</div>
+            </div>
+        </div>
+    `).join("");
+}
+
+function renderGoal() {
+    const goal = state.goal;
+    const target = Math.max(1, Number(goal.target) || 1);
+    const saved = Math.max(0, Number(goal.saved) || 0);
+    const percent = Math.min(100, Math.round(saved / target * 100));
+    const remaining = Math.max(0, target - saved);
+
+    document.getElementById("goalNameSmall").textContent = goal.name;
+    document.getElementById("goalSavedText").textContent = `${money(saved)} saved`;
+    document.getElementById("goalPercent").textContent = `${percent}%`;
+    document.getElementById("goalProgressFill").style.width = `${percent}%`;
+    document.getElementById("goalDescription").textContent =
+        remaining === 0 ? "Goal reached! Great work." : `${money(remaining)} remaining to reach your goal.`;
+
+    document.getElementById("goalBigName").textContent = goal.name;
+    document.getElementById("goalBigSaved").textContent = `${money(saved)} saved of ${money(target)}`;
+    document.getElementById("goalBigPercent").textContent = `${percent}%`;
+    document.getElementById("goalBigFill").style.width = `${percent}%`;
+    document.getElementById("goalBigDescription").textContent =
+        remaining === 0 ? "Congratulations! You reached your saving goal." : `${money(remaining)} left to reach your target.`;
+
+    document.getElementById("goalNameInput").value = goal.name;
+    document.getElementById("goalTargetInput").value = goal.target;
+    document.getElementById("goalSavedInput").value = goal.saved;
+}
+
+function renderDashboardInsight() {
+    const totals = getCategoryTotals(currentMonthTransactions());
+    const topCategory = Object.entries(totals).sort((a, b) => b[1] - a[1])[0];
+    const monthTotal = sumTransactions(currentMonthTransactions());
+
+    let title = "Start tracking your spending";
+    let description = "Add your expenses to receive more useful insights.";
+
+    if (monthTotal > 0 && topCategory && topCategory[1] > 0) {
+        title = `${topCategory[0]} is your top category`;
+        description = `You have recorded ${money(topCategory[1])} in ${topCategory[0].toLowerCase()} this month. Check whether these expenses match your plans.`;
+    }
+
+    document.getElementById("dashboardInsight").innerHTML = `
+        <div class="insight-banner">
+            <h4>💡 ${escapeHTML(title)}</h4>
+            <p>${escapeHTML(description)}</p>
+        </div>
+        <div class="insight-line">
+            <span>📊</span>
+            <p><strong>Budget check</strong><br>
+            ${monthTotal <= state.budget
+                ? `You have ${money(state.budget - monthTotal)} left in your monthly budget.`
+                : `You are ${money(monthTotal - state.budget)} over your monthly budget.`}</p>
+        </div>`;
+}
+
+function renderAllInsights() {
+    const totals = getCategoryTotals(currentMonthTransactions());
+    const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+    const total = sumTransactions(currentMonthTransactions());
+    const top = sorted[0];
+
+    const insights = [];
+
+    insights.push({
+        icon: "💰",
+        title: "Monthly spending",
+        text: `You have recorded ${money(total)} in expenses this month against a budget of ${money(state.budget)}.`
+    });
+
+    if (top && top[1] > 0) {
+        insights.push({
+            icon: CATEGORY_INFO[top[0]].icon,
+            title: `Top category: ${top[0]}`,
+            text: `${money(top[1])} recorded in ${top[0].toLowerCase()}. Consider reviewing these expenses.`
+        });
+    }
+
+    insights.push({
+        icon: "🎯",
+        title: "Saving goal",
+        text: `${money(Math.max(0, state.goal.target - state.goal.saved))} remaining to reach your ${state.goal.name.toLowerCase()} goal.`
+    });
+
+    insights.push({
+        icon: "🧾",
+        title: "Expense tracking",
+        text: `${currentMonthTransactions().length} transactions recorded this month. Regular tracking helps you understand your spending.`
+    });
+
+    document.getElementById("allInsights").innerHTML = insights.map(item => `
+        <div class="insight-line">
+            <span>${item.icon}</span>
+            <p><strong>${escapeHTML(item.title)}</strong><br>${escapeHTML(item.text)}</p>
+        </div>
+    `).join("");
+}
+
+function renderTransactions() {
+    const search = document.getElementById("transactionSearch").value.trim().toLowerCase();
+
+    const filtered = [...state.transactions]
+        .filter(transaction => activeFilter === "All" || transaction.category === activeFilter)
+        .filter(transaction => transaction.merchant.toLowerCase().includes(search) ||
+            transaction.category.toLowerCase().includes(search))
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+    document.getElementById("transactionTable").innerHTML = filtered.map(transaction => `
+        <tr>
+            <td><strong>${escapeHTML(transaction.merchant)}</strong></td>
+            <td><span class="category-pill">${escapeHTML(transaction.category)}</span></td>
+            <td>${escapeHTML(dateLabel(transaction.date))}</td>
+            <td><strong>${money(transaction.amount)}</strong></td>
+            <td><button class="text-button" data-delete="${Number(transaction.id)}" aria-label="Delete ${escapeHTML(transaction.merchant)}">Delete</button></td>
+        </tr>
+    `).join("");
+
+    document.getElementById("transactionEmpty").hidden = filtered.length > 0;
+
+    document.querySelectorAll("[data-filter]").forEach(button => {
+        button.classList.toggle("active", button.dataset.filter === activeFilter);
+    });
+}
+
+function renderNotifications() {
+    const container = document.getElementById("notificationList");
+    const notifications = state.notifications || [];
+
+    document.getElementById("notificationCount").textContent = notifications.length;
+
+    container.innerHTML = notifications.map(notification => {
+        const date = new Date(notification.date);
+        const dateText = Number.isNaN(date.getTime()) ? "" :
+            date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+
+        return `
+            <div class="notification-item">
+                <div class="tip-icon">♧</div>
+                <div>
+                    <strong>${escapeHTML(notification.title)}</strong>
+                    <p>${escapeHTML(notification.message)}</p>
+                    <small>${escapeHTML(dateText)}</small>
+                </div>
+            </div>`;
+    }).join("");
+
+    document.getElementById("notificationEmpty").hidden = notifications.length > 0;
+
+    if ("Notification" in window) {
+        document.getElementById("browserStatus").textContent =
+            "Browser permission: " + Notification.permission;
+    } else {
+        document.getElementById("browserStatus").textContent =
+            "Browser notifications are not supported in this browser.";
+    }
+}
+
+const PAGE_TITLES = {
+    dashboard: "Dashboard",
+    transactions: "Transactions",
+    insights: "Insights & Tips",
+    notifications: "Notifications",
+    goals: "Saving Goals",
+    settings: "Settings"
+};
+
+function showPage(page) {
+    if (!PAGE_TITLES[page]) return;
+
+    document.querySelectorAll(".page-section").forEach(section => {
+        section.classList.toggle("active", section.id === "page-" + page);
+    });
+
+    document.querySelectorAll("[data-page]").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === page);
+    });
+
+    document.getElementById("pageTitle").textContent = PAGE_TITLES[page];
+    setSidebarOpen(false);
+
+    if (page === "transactions") renderTransactions();
+    if (page === "insights") {
+        renderAllInsights();
+        renderTips("allTips");
+    }
+    if (page === "notifications") renderNotifications();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function setSidebarOpen(isOpen) {
+    const sidebar = document.getElementById("sidebarNav");
+    const overlay = document.getElementById("sidebarOverlay");
+    const menu = document.getElementById("mobileMenu");
+    sidebar.classList.toggle("is-open", isOpen);
+    overlay.classList.toggle("is-open", isOpen);
+    menu.setAttribute("aria-expanded", String(isOpen));
+    document.body.classList.toggle("nav-open", isOpen);
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add("open");
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove("open");
+}
+
+function openTransactionModal() {
+    document.getElementById("transactionForm").reset();
+    document.getElementById("dateInput").value = localDateString();
+    openModal("transactionModal");
+    document.getElementById("merchantInput").focus();
+}
+
+function parseTransactionText() {
+    const text = document.getElementById("smsText").value.trim();
+    if (!text) {
+        showToast("Paste some bank or UPI text first.");
+        return;
+    }
+
+    const amountMatch =
+        text.match(/(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d{1,2})?)/i) ||
+        text.match(/(?:debited|paid|spent|payment of|amount)\D{0,15}([\d,]+(?:\.\d{1,2})?)/i);
+
+    if (amountMatch) {
+        document.getElementById("amountInput").value =
+            Number(amountMatch[1].replace(/,/g, ""));
+    }
+
+    const merchantPatterns = [
+        /(?:at|to|towards|merchant|on)\s+([A-Za-z][A-Za-z0-9 &.'-]{1,35})/i,
+        /\b(Swiggy|Zomato|Amazon|Flipkart|Uber|Ola|Paytm|IRCTC|Reliance Digital)\b/i
+    ];
+
+    let merchant = "";
+
+    for (const pattern of merchantPatterns) {
+        const match = text.match(pattern);
+        if (match) {
+            merchant = (match[1] || match[0]).trim();
+            merchant = merchant.replace(/\s+(via|using|on|dated|ref|upi|card).*$/i, "").trim();
+            break;
+        }
+    }
+
+    if (merchant) {
+        document.getElementById("merchantInput").value = merchant;
+    }
+
+    document.getElementById("categoryInput").value = inferCategory(merchant || text);
+
+    if (amountMatch || merchant) {
+        showToast("Text analyzed. Please verify the details.");
+    } else {
+        showToast("Could not detect details. Please enter them manually.");
+    }
+}
+
+function inferCategory(description) {
+    const value = String(description || "").toLowerCase();
+    if (/swiggy|zomato|restaurant|food|cafe|pizza|grocery|blinkit|zepto|bigbasket/.test(value)) return "Food";
+    if (/metro|bus|uber|ola|fuel|petrol|train|travel|irctc|rapido/.test(value)) return "Travel";
+    if (/electricity|water bill|gas bill|recharge|broadband|mobile bill|fastag/.test(value)) return "Bills/Recharge";
+    if (/college|tuition|school|university|fees/.test(value)) return "Fees";
+    if (/amazon|flipkart|shopping|reliance|store|myntra/.test(value)) return "Shopping";
+    if (/movie|cinema|netflix|prime video|spotify|concert|entertainment/.test(value)) return "Entertainment";
+    return "Others";
+}
+
+/*
+ * Native Android WebView integration contract:
+ * Call window.FinBuddy.captureTransaction({ externalId, merchant, amount, date, rawText })
+ * only after the native notification parser identifies a successful payment.
+ * A regular web page cannot read notifications from other apps. The Android
+ * NotificationListenerService and explicit user-granted notification access
+ * are separate native-app requirements; app notification formats may vary.
+ */
+window.FinBuddy = window.FinBuddy || {};
+window.FinBuddy.captureTransaction = function (incoming) {
+    if (!incoming || typeof incoming !== "object") return { ok: false, reason: "invalid_payload" };
+
+    const merchant = String(incoming.merchant || "").trim().slice(0, 100);
+    const amount = Number(incoming.amount);
+    const date = String(incoming.date || "");
+    const externalId = String(incoming.externalId || "").trim().slice(0, 160);
+    const validDate = /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+        !Number.isNaN(new Date(date + "T12:00:00").getTime());
+
+    if (!merchant || !Number.isFinite(amount) || amount <= 0 || !validDate) {
+        return { ok: false, reason: "invalid_transaction" };
+    }
+    if (externalId && state.transactions.some(item => item.externalId === externalId)) {
+        return { ok: true, duplicate: true };
+    }
+
+    const category = inferCategory(merchant + " " + String(incoming.rawText || ""));
+    const transaction = {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        externalId,
+        source: "android_notification",
+        merchant,
+        amount: Math.round(amount * 100) / 100,
+        category,
+        date
+    };
+
+    state.transactions.push(transaction);
+    if (!saveState()) {
+        state.transactions.pop();
+        return { ok: false, reason: "storage_unavailable" };
+    }
+    renderDashboard();
+    renderTransactions();
+    checkBudgetAlert();
+    addNotification("UPI expense captured", `${merchant}: ${money(transaction.amount)} recorded under ${category}.`);
+    return { ok: true, duplicate: false, transaction };
+};
+
+function refreshAndroidCaptureStatus() {
+    const status = document.getElementById("androidCaptureStatus");
+    const help = document.getElementById("androidCaptureHelp");
+    const button = document.getElementById("androidCaptureButton");
+    const nativeApp = window.FinBuddyAndroid;
+
+    if (!nativeApp) {
+        status.textContent = "Android app required";
+        help.textContent = "This browser page cannot read notifications from other apps.";
+        button.textContent = "Unavailable";
+        return;
+    }
+
+    const enabled = nativeApp.hasNotificationAccess();
+    status.textContent = enabled ? "Notification access enabled" : "Notification access not enabled";
+    help.textContent = enabled
+        ? "FinBuddy checks supported payment notifications on this device."
+        : "Choose Set up to review Android's notification access screen.";
+    button.textContent = enabled ? "Manage" : "Set up";
+}
+
+function syncAndroidTransactions() {
+    const nativeApp = window.FinBuddyAndroid;
+    if (!nativeApp) return;
+
+    try {
+        const pending = JSON.parse(nativeApp.peekPendingTransactions() || "[]");
+        pending.forEach(item => {
+            const result = window.FinBuddy.captureTransaction(item);
+            if (result.ok && item.notificationId) nativeApp.acknowledgeTransaction(item.notificationId);
+        });
+    } catch (error) {
+        // Keep queued native items for a later sync if parsing or storage fails.
+    }
+}
+
+async function addTransaction(event) {
+    event.preventDefault();
+    await backendReady;
+
+    const merchant = document.getElementById("merchantInput").value.trim();
+    const amount = Number(document.getElementById("amountInput").value);
+    const category = document.getElementById("categoryInput").value;
+    const date = document.getElementById("dateInput").value;
+
+    if (!merchant || !Number.isFinite(amount) || amount <= 0 || !date) {
+        showToast("Please enter a valid merchant, amount and date.");
+        return;
+    }
+
+    let transaction;
+    if (databaseConnected) {
+        try {
+            transaction = await apiRequest("/api/transactions", {
+                method: "POST",
+                body: JSON.stringify({
+                    merchant,
+                    amount: Math.round(amount * 100) / 100,
+                    category: CATEGORY_INFO[category] ? category : "Others",
+                    date,
+                    txn_type: "debit",
+                    raw_text: document.getElementById("smsText").value.trim() || `Manual expense: ${merchant}`
+                })
+            });
+        } catch (error) {
+            showToast(error.message || "Could not save to the FinBuddy database.");
+            return;
+        }
+    } else {
+        transaction = {
+            id: Date.now(),
+            merchant,
+            amount: Math.round(amount * 100) / 100,
+            category: CATEGORY_INFO[category] ? category : "Others",
+            date,
+            txn_type: "debit"
+        };
+    }
+
+    state.transactions.push(transaction);
+    saveState();
+    closeModal("transactionModal");
+    renderDashboard();
+    renderTransactions();
+    checkBudgetAlert();
+    addNotification("Transaction added", `${merchant}: ${money(amount)} recorded under ${category}.`);
+    showToast("Transaction added successfully.");
+}
+
+async function deleteTransaction(id) {
+    const transaction = state.transactions.find(item => Number(item.id) === id);
+    if (!transaction) return;
+    if (!window.confirm(`Permanently delete ${transaction.merchant} from FinBuddy?`)) return;
+
+    await backendReady;
+    if (databaseConnected) {
+        try {
+            await apiRequest(`/api/transactions/${encodeURIComponent(id)}`, { method: "DELETE" });
+        } catch (error) {
+            showToast(error.message || "Could not delete from the FinBuddy database.");
+            return;
+        }
+    }
+
+    state.transactions = state.transactions.filter(item => Number(item.id) !== id);
+    saveState();
+    renderDashboard();
+    renderTransactions();
+    addNotification("Transaction removed", `${transaction.merchant} was removed from your transaction list.`);
+    showToast("Transaction removed.");
+}
+
+async function enableBrowserNotifications() {
+    if (!("Notification" in window)) {
+        showToast("Browser notifications are not supported here.");
+        renderNotifications();
+        return;
+    }
+
+    try {
+        const permission = await Notification.requestPermission();
+        renderNotifications();
+
+        if (permission === "granted") {
+            showToast("Browser notifications enabled.");
+            new Notification("FinBuddy", { body: "Notifications are ready." });
+        } else {
+            showToast("Notification permission was not granted.");
+        }
+    } catch (error) {
+        showToast("Could not enable browser notifications.");
+    }
+}
+
+function resetDemoData() {
+    const confirmed = window.confirm(databaseConnected
+        ? "Reset FinBuddy settings? Transactions saved in SQLite will be kept."
+        : "Reset all FinBuddy prototype data in this browser?");
+    if (!confirmed) return;
+
+    const savedTransactions = databaseConnected ? state.transactions : structuredCopy(DEMO_TRANSACTIONS);
+    state = structuredCopy(DEFAULT_STATE);
+    state.transactions = savedTransactions;
+    saveState();
+    applyTheme(state.theme);
+    renderDashboard();
+    renderTransactions();
+    renderAllInsights();
+    renderTips("allTips");
+    renderNotifications();
+    showPage("dashboard");
+    showToast(databaseConnected ? "Settings reset. SQLite transactions were kept." : "Demo data has been reset.");
+}
+
+/* Navigation */
+document.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+document.querySelectorAll("[data-goto]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.goto));
+});
+
+document.getElementById("mobileMenu").addEventListener("click", () => {
+    setSidebarOpen(!document.getElementById("sidebarNav").classList.contains("is-open"));
+});
+document.getElementById("sidebarOverlay").addEventListener("click", () => setSidebarOpen(false));
+
+document.getElementById("topNotifications").addEventListener("click", () => showPage("notifications"));
+
+/* Add transaction */
+document.getElementById("addTransactionTop").addEventListener("click", openTransactionModal);
+document.getElementById("addTransactionPage").addEventListener("click", openTransactionModal);
+document.getElementById("mobileAdd").addEventListener("click", openTransactionModal);
+document.getElementById("transactionForm").addEventListener("submit", addTransaction);
+document.getElementById("parseSms").addEventListener("click", parseTransactionText);
+
+document.querySelectorAll("[data-close]").forEach(button => {
+    button.addEventListener("click", () => closeModal(button.dataset.close));
+});
+
+document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+    backdrop.addEventListener("click", event => {
+        if (event.target === backdrop) backdrop.classList.remove("open");
+    });
+});
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        document.querySelectorAll(".modal-backdrop.open").forEach(modal => modal.classList.remove("open"));
+        setSidebarOpen(false);
+    }
+});
+
+window.addEventListener("resize", () => {
+    if (window.innerWidth > 600) setSidebarOpen(false);
+});
+
+/* Charts and transaction filters */
+document.getElementById("chartPeriod").addEventListener("change", renderChart);
+document.getElementById("transactionSearch").addEventListener("input", renderTransactions);
+
+document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        renderTransactions();
+    });
+});
+
+document.getElementById("transactionTable").addEventListener("click", event => {
+    const button = event.target.closest("[data-delete]");
+    if (button) deleteTransaction(Number(button.dataset.delete));
+});
+
+/* Saving goal */
+document.getElementById("goalForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const name = document.getElementById("goalNameInput").value.trim();
+    const target = Number(document.getElementById("goalTargetInput").value);
+    const saved = Number(document.getElementById("goalSavedInput").value);
+
+    if (!name || !Number.isFinite(target) || target <= 0 ||
+        !Number.isFinite(saved) || saved < 0) {
+        showToast("Enter a valid goal name and amounts.");
+        return;
+    }
+
+    state.goal = { name, target, saved };
+    state.saved = saved;
+    saveState();
+    renderDashboard();
+    showToast("Saving goal updated.");
+    addNotification("Saving goal updated", `${name} target: ${money(target)}.`);
+});
+
+/* Budget */
+document.getElementById("budgetForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const budget = Number(document.getElementById("budgetInput").value);
+    if (!Number.isFinite(budget) || budget <= 0) {
+        showToast("Enter a valid budget amount.");
+        return;
+    }
+
+    state.budget = budget;
+    state.lastBudgetAlertMonth = "";
+    saveState();
+    renderDashboard();
+    checkBudgetAlert();
+    showToast("Monthly budget saved.");
+    addNotification("Budget updated", `Your monthly budget is now ${money(budget)}.`);
+});
+
+/* Theme */
+document.getElementById("themeSelect").addEventListener("change", event => {
+    applyTheme(event.target.value);
+});
+document.getElementById("themeToggle").addEventListener("click", () => {
+    applyTheme(document.body.classList.contains("dark") ? "light" : "dark");
+});
+
+if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
+        if (state.theme === "system") applyTheme("system");
+    });
+}
+
+/* Notifications */
+document.getElementById("enableBrowserNotifications").addEventListener("click", enableBrowserNotifications);
+document.getElementById("settingsBrowserButton").addEventListener("click", enableBrowserNotifications);
+document.getElementById("androidCaptureButton").addEventListener("click", () => {
+    if (!window.FinBuddyAndroid) {
+        showToast("Automatic UPI capture is available in the Android app only.");
+        return;
+    }
+    window.FinBuddyAndroid.openNotificationAccessSettings();
+});
+
+document.getElementById("clearNotifications").addEventListener("click", () => {
+    if (!state.notifications.length) {
+        showToast("Notification history is already empty.");
+        return;
+    }
+
+    state.notifications = [];
+    saveState();
+    renderNotifications();
+    showToast("Notification history cleared.");
+});
+
+/* Budget alerts */
+document.getElementById("budgetAlertsToggle").addEventListener("click", event => {
+    state.budgetAlerts = !state.budgetAlerts;
+    event.currentTarget.classList.toggle("on", state.budgetAlerts);
+    event.currentTarget.setAttribute("aria-pressed", String(state.budgetAlerts));
+    saveState();
+    showToast(state.budgetAlerts ? "Spending alerts enabled." : "Spending alerts disabled.");
+});
+
+/* Reset prototype */
+document.getElementById("resetDemo").addEventListener("click", resetDemoData);
+
+/* Initial render */
+refreshAndroidCaptureStatus();
+syncAndroidTransactions();
+window.setInterval(() => {
+    refreshAndroidCaptureStatus();
+    syncAndroidTransactions();
+}, 3000);
+
+document.getElementById("currentDate").textContent =
+    new Date().toLocaleDateString("en-IN", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+
+document.getElementById("dateInput").value = localDateString();
+document.getElementById("budgetInput").value = state.budget;
+
+document.getElementById("budgetAlertsToggle").classList.toggle("on", state.budgetAlerts);
+document.getElementById("budgetAlertsToggle").setAttribute("aria-pressed", String(state.budgetAlerts));
+
+applyTheme(state.theme);
+renderDashboard();
+renderTransactions();
+renderAllInsights();
+renderTips("allTips");
+renderNotifications();
+checkBudgetAlert();
+backendReady = initializeBackend();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+category,mean,median,p75,share_of_total_pct,share_excl_fees_pct
+Food,252.6,255.0,330.0,4.2,16.7
+Travel,124.6,123.0,162.25,2.1,8.2
+Shopping,353.1,357.5,423.0,5.9,23.4
+Bills/Recharge,696.0,704.5,837.25,11.5,46.1
+Fees,4520.4,4547.5,5285.0,74.9,
+Entertainment,84.8,86.0,116.0,1.4,5.6
+Others,,,,,
