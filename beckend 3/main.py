@@ -18,9 +18,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_DATA_LAYER_DIR = PROJECT_ROOT / "fin-buddy-main" / "finbuddy.ui" / "finbuddy"
-DATA_LAYER_DIR = Path(os.environ.get("FINBUDDY_DATA_LAYER_DIR", DEFAULT_DATA_LAYER_DIR)).resolve()
+from data_layer_path import resolve_data_layer_dir
+
+DATA_LAYER_DIR = resolve_data_layer_dir(__file__)
 if str(DATA_LAYER_DIR) not in sys.path:
     sys.path.insert(0, str(DATA_LAYER_DIR))
 

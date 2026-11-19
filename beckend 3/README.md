@@ -1,6 +1,6 @@
 # Student Spending Backend
 
-A FastAPI backend for parsing bank/UPI SMS, categorizing transactions, saving transaction history, and returning summaries and basic saving tips. It delegates transaction storage and validation to the existing FinBuddy database layer in `fin-buddy-main/finbuddy.ui/finbuddy/db`.
+A FastAPI backend for parsing bank/UPI SMS, categorizing transactions, saving transaction history, and returning summaries and basic saving tips. It delegates transaction storage and validation to the existing FinBuddy database layer in `finbuddy.ui/finbuddy/db`.
 
 ## Transaction model
 
@@ -42,7 +42,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Run these commands from this directory. API documentation is available at `http://127.0.0.1:8000/docs`. By default, the backend connects to `fin-buddy-main/finbuddy.ui/finbuddy/data/app.sqlite3` using the existing database layer. Set `FINBUDDY_DB` to use another existing database file (`FINBUDDY_DB` takes precedence over the legacy `SPENDING_DB_PATH` setting), and `FINBUDDY_DATA_LAYER_DIR` if the database package is in a different location. The backend requires an existing database file and checks for the FinBuddy transaction table and supported schema version before opening it through the database layer. A missing or incompatible database is reported to the UI with an actionable message; the backend does not create a replacement database or run migrations. Any required migration must be handled through the database team.
+Run these commands from this directory. API documentation is available at `http://127.0.0.1:8000/docs`. Supported project layouts put `beckend 3/` beside `finbuddy.ui/`, or put `finbuddy.ui/` inside a sibling `fin-buddy-main/` directory. The data-layer package is `finbuddy.ui/finbuddy/`; the backend detects either layout and uses that package's `data/app.sqlite3` by default. Set `FINBUDDY_DATA_LAYER_DIR` to the existing directory that contains `db/` when the package is elsewhere. Set `FINBUDDY_DB` to another existing database file; it takes precedence over the legacy `SPENDING_DB_PATH` setting. The backend checks for the FinBuddy transaction table and supported schema version before opening the selected database through the existing database layer. A missing or incompatible database is reported to the UI with an actionable message; the backend does not create a replacement database or run migrations. If the data-layer directory cannot be found, set `FINBUDDY_DATA_LAYER_DIR` to its existing location. Any required migration must be handled through the database team.
 
 ## Web UI endpoints
 
