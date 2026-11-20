@@ -1,41 +1,38 @@
-# fin-buddy
+# FinBuddy
 
-FinBuddy is a responsive expense-tracking prototype with a dashboard for reviewing spending and transaction history.
+FinBuddy combines a browser spending dashboard, a FastAPI backend, the existing SQLite data layer, and an Android companion app.
 
-## Features
+## Project folders
 
-- Add and view expenses
-- Review spending by category
-- See monthly totals and a spending chart
-- Save transactions in a local SQLite database
-- Use the interface on desktop and mobile screens
+- `beckend 3/` — FastAPI service and API documentation.
+- `finbuddy.ui/` — browser interface, Android app, and SQLite schema/data-layer code.
 
-## Tech stack
+## Run the API on Windows
 
-- HTML, CSS and JavaScript
-- Python
-- SQLite
+From the project root in PowerShell:
 
-## Run locally
+```powershell
+Set-Location '.\beckend 3'
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --reload
+```
 
-You need Python 3.9 or later.
+The API listens at `http://127.0.0.1:8000`. Open `/docs` for interactive API documentation and `/api/health` to check the database connection.
 
-### macOS
+The backend requires an existing FinBuddy SQLite database with a compatible schema. It does not create a replacement database or run migrations automatically. Set `FINBUDDY_DB` to the database file you intend to use. Use a disposable database for development; do not use production transaction data.
 
-Double-click `Start FinBuddy.command` in the project folder and keep its Terminal window open.
+## Run the browser UI
 
-### VS Code Live Server
+Serve `finbuddy.ui/index.html` from a local HTTP server such as VS Code Live Server while the API is running. The UI connects to the API at `127.0.0.1:8000` when served from a local web origin. Opening the HTML file directly uses browser-local preview storage instead.
 
-1. Start the backend using `Start FinBuddy.command`.
-2. Open `index.html` in VS Code and click **Go Live**.
-3. The page should open at `http://127.0.0.1:5500/` or `http://127.0.0.1:5501/` and show **SQLite connected**.
+## Android app
 
-You can also open `http://127.0.0.1:8000/` to use the page served directly by the backend.
+Open `finbuddy.ui/android` in Android Studio. The debug build defaults to the Android emulator's host address, `http://10.0.2.2:8000`. Release builds require an explicitly configured HTTPS backend. Do not embed shared API tokens or real production URLs in the app.
 
-## Data storage
+The Android companion can read supported payment notifications and upload transactions. It does not provide student accounts or per-student data isolation, so this project is not ready for a production deployment with real student data.
 
-Transactions are stored locally in `finbuddy/data/app.sqlite3`. The backend only listens on your own computer; this project does not currently provide cloud storage or multi-device sync.
+## Data hygiene
 
-## Current limitations
-
-The web version requires expenses to be entered manually. Automatic transaction capture from UPI apps such as Google Pay, PhonePe, Paytm or BHIM is not currently available.
+SQLite files, database backups, Android build output, Python caches, and local machine configuration are excluded from new Git additions. Keep real transaction data and secrets out of source control.

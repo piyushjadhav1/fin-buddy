@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Local databases and backups (never commit transaction data)
+**/data/*.sqlite3
+**/data/*.db
+**/data/backups/
+
+# Android and Gradle generated files / machine-specific SDK path
+**/.gradle/
+**/build/
+**/local.properties
+
+# IDE and operating-system files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

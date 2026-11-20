@@ -59,6 +59,8 @@ public final class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        CaptureQueue.retryConfigurationFailures(this);
+        TransactionSyncScheduler.enqueue(this);
         if (webView != null) {
             webView.post(() -> webView.evaluateJavascript("refreshAndroidCaptureStatus();", null));
         }
